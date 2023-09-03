@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Scanner;
 
-public class Category implements IEntity, Serializable {
+public class Category implements IEntity<Category>, Serializable {
     private int id;
     private String name;
     private boolean status;
@@ -139,17 +139,8 @@ public class Category implements IEntity, Serializable {
      *
      */
     @Override
-    public void output() {
+    public void output(List<Category> categoryList) {
         String statusCategory=this.status?"Hoạt động": "Không hoạt động";
         System.out.printf("CategoryId:%d - CategoryName:%s - status:%s\n",this.id,this.name,statusCategory);
-//        String leftAlignFormat = "| %-4d | %-15s | %-15s |%n";
-//
-//        System.out.format("+------+-----------------+-----------------+%n");
-//        System.out.format("| CategoryId     | CategoryName   | status     |%n");
-//        System.out.format("+------+-----------------+-----------------+%n");
-//        for (int i = 0; i < 100; i++) {
-//            System.out.format(leftAlignFormat, "Category" + i, i * i);
-//        }
-//        System.out.format("+------+-----------------+-----------------+%n");
     }
 }

@@ -11,11 +11,13 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Library {
-    static List<Category> categoryList = new ArrayList<>();
-    static List<Book> bookList = new ArrayList<>();
+    public static List<Category> categoryList = new ArrayList<>();
+    public static List<Book> bookList = new ArrayList<>();
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        categoryList = readDataFromFile();
+        bookList = readDataFromFileBook();
         do {
             System.out.println("===== QUẢN LÝ THƯ VIỆN =====");
             System.out.println("1. Quản lý Thể loại");
@@ -25,22 +27,18 @@ public class Library {
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
-                    case 1:
-                        Library.catagoryMenu(scanner);
-                        break;
-                    case 2:
-                        Library.bookMenu(scanner);
-                        break;
-                    case 3:
-                        System.exit(0);
-                        break;
-                    default:
-                        System.err.println("Vui lòng chọn từ 1-3");
+                    case 1 -> catagoryMenu(scanner);
+//                        break;
+                    case 2 -> bookMenu(scanner);
+//                        break;
+                    case 3 -> System.exit(0);
+//                        break;
+                    default -> System.err.println("Vui lòng chọn từ 1-3");
                 }
             } catch (NumberFormatException nfe) {
                 System.err.println("Vui lòng chọn số");
             } catch (Exception ex) {
-                System.err.println("Có lỗi không xác định, vui lòng liên hệ hệ thống");
+                System.err.println("Có lỗi không xác định, vui lòng liên hệ hệ thống 41");
             }
         } while (true);
     }
@@ -48,7 +46,7 @@ public class Library {
     /**
      * Quản lý thể loại lưu vào file categories.txt
      */
-    public static void readDataFromFile() {
+    public static List<Category> readDataFromFile() {
         //1. Khởi tạo đối tượng File
         File file = new File("categories.txt");
         FileInputStream fis = null;
@@ -59,9 +57,7 @@ public class Library {
             //3. Khởi tạo đối tượng ObjectInputStream
             ois = new ObjectInputStream(fis);
             //4. Đọc dữ liệu object từ file (readObject())
-            if (ois.readObject() != null) {
-                categoryList = (List<Category>) ois.readObject();
-            }
+            categoryList = (List<Category>) ois.readObject();
         } catch (FileNotFoundException e) {
             System.err.println("Không tồn tại file.");
         } catch (IOException e) {
@@ -85,9 +81,10 @@ public class Library {
                 }
             }
         }
+        return categoryList;
     }
 
-    public static void writeDataToFile() {
+    public static void writeDataToFile(List<Category> categoryList) {
         //1. Khởi tạo đối tượng file
         File file = new File("categories.txt");
         FileOutputStream fos = null;
@@ -133,7 +130,7 @@ public class Library {
     /**
      * Quản lý sách lưu vào file books.txt
      */
-    public static void readDataFromFileBook() {
+    public static List<Book> readDataFromFileBook() {
         //1. Khởi tạo đối tượng File
         File file = new File("books.txt");
         FileInputStream fis = null;
@@ -144,9 +141,7 @@ public class Library {
             //3. Khởi tạo đối tượng ObjectInputStream
             ois = new ObjectInputStream(fis);
             //4. Đọc dữ liệu object từ file (readObject())
-            if (ois.readObject() != null) {
-                bookList = (List<Book>) ois.readObject();
-            }
+            bookList = (List<Book>) ois.readObject();
         } catch (FileNotFoundException e) {
             System.err.println("Không tồn tại file.");
         } catch (IOException e) {
@@ -170,9 +165,10 @@ public class Library {
                 }
             }
         }
+        return bookList;
     }
 
-    public static void writeDataToFileBook() {
+    public static void writeDataToFileBook(List<Book> bookList) {
         //1. Khởi tạo đối tượng file
         File file = new File("books.txt");
         FileOutputStream fos = null;
@@ -230,7 +226,6 @@ public class Library {
                 int choiceCategoryMenu = Integer.parseInt(scanner.nextLine());
                 switch (choiceCategoryMenu) {
                     case 1:
-                        writeDataToFile();
                         Library.inputCategory();
                         break;
                     case 2:
@@ -240,15 +235,12 @@ public class Library {
                         Library.statisticCategory();
                         break;
                     case 4:
-                        writeDataToFile();
                         Library.updateCategory(scanner);
                         break;
                     case 5:
-                        writeDataToFile();
                         Library.deleteCategory();
                         break;
                     case 6:
-                        writeDataToFile();
                         isExit = false;
                         break;
                     default:
@@ -257,7 +249,7 @@ public class Library {
             } catch (NumberFormatException ex1) {
                 System.err.println("Vui lòng chọn số");
             } catch (Exception ex) {
-                System.err.println("Có lỗi không xác định, vui lòng liên hệ hệ thống");
+                System.err.println("Có lỗi không xác định, vui lòng liên hệ hệ thống 252");
             }
         } while (isExit);
     }
@@ -269,6 +261,7 @@ public class Library {
         Category category = new Category();
         category.input(scanner, categoryList);
         categoryList.add(category);
+        writeDataToFile(categoryList);
     }
 
     /**
@@ -276,7 +269,7 @@ public class Library {
      */
     public static void sortNamedDisplayCategory() {
         categoryList.sort(Comparator.comparing(Category::getName));
-        categoryList.forEach(Category::output);
+        categoryList.forEach(Category::output);//Lỗi
     }
 
     /**
@@ -359,6 +352,7 @@ public class Library {
         }
     }
 
+    //hien thi menu book
     public static void bookMenu(Scanner scanner) {
         boolean isExit = true;
         do {
@@ -383,10 +377,10 @@ public class Library {
                         Library.deleteBook();
                         break;
                     case 4:
-                        Library.searchIdBookName();
+                        searchIdBookName();
                         break;
                     case 5:
-                        Library.displayBook();
+                        displayBook();
                         break;
                     case 6:
                         isExit = false;
@@ -397,7 +391,7 @@ public class Library {
             } catch (NumberFormatException ex1) {
                 System.err.println("Vui lòng chọn số");
             } catch (Exception ex) {
-                System.err.println("Có lỗi không xác định, vui lòng liên hệ hệ thống");
+                System.err.println("Có lỗi không xác định, vui lòng liên hệ hệ thống 395");
             }
         } while (isExit);
     }
@@ -409,6 +403,7 @@ public class Library {
         Book book = new Book();
         book.input(scanner, bookList);
         bookList.add(book);
+        writeDataToFileBook(bookList);
     }
 
     /**
@@ -438,8 +433,8 @@ public class Library {
                     System.out.println("Đã cập nhật nhà xuất bản mới thành công.");
                     books.setDescription(Book.validateDescription(scanner));
                     System.out.println("Đã cập nhật mô tả sách mới thành công.");
-                    books.setId(Category.validateCategoryId(scanner, categoryList));
-                    System.out.println("Đã cập nhât mã thể loại sách mới thành công.");
+//                    books.setId(Category.validateCategoryId(scanner, categoryList));
+//                    System.out.println("Đã cập nhât mã thể loại sách mới thành công.");
                     checkBookId = true;
                     isExit = false;
                 }
@@ -482,26 +477,33 @@ public class Library {
      * Methor tìm kiếm sách
      */
     public static void searchIdBookName() {
-        String searchName = scanner.nextLine();
         System.out.println("Nhập vào sách cần tìm :");
+        String searchName = scanner.nextLine();
         bookList.stream().filter(book -> book.getTitle().contains(searchName)
                 || book.getAuthor().contains(searchName)
                 || book.getPublisher().contains(searchName)).collect(Collectors.toList());
         List<Book> bookList1 = bookList.stream().filter(book -> book.getTitle().contains(searchName)
                 || book.getAuthor().contains(searchName)
                 || book.getPublisher().contains(searchName)).collect(Collectors.toList());
-        bookList1.forEach(Book::output);
+        System.out.printf("| %-15s | %-20s | %-20s | %-20s | %-20s | %-20s | %n",
+                "Mã sách:", "Tiêu đề:", "Tác giả:", "Nhà xuất bản:", "Năm xuất bản:", "Thể loại:");
+        bookList1.forEach(Book::output); //Lỗi
     }
 
     /**
      * Methor hiển thị danh sách sách theo nhóm thể loại
      */
     public static void displayBook() {
-        // Duyệt các thể loại
-        categoryList.stream().forEach(category -> {
-            bookList.stream().filter(book -> book.getCategoryId() == category.getId()).forEach(book -> book.output());
-
-        });
-
+        int cntCategory=1;
+        for (Category category:categoryList) {
+            System.out.println(cntCategory+"."+category.getName());
+            cntCategory++;
+            for (Book books:bookList) {
+                if(category.getId()==books.getCategoryId()){
+                    books.output(categoryList);
+                }
+            }
+            System.out.println();
+        }
     }
 }

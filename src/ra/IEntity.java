@@ -7,5 +7,6 @@ import java.util.Scanner;
 
 public interface IEntity<T> {
     void input(Scanner scanner, List<T>list);
-    void output();
+    void output(List<Category>categoryList);
+
 }
