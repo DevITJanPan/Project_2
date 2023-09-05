@@ -6,13 +6,15 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Scanner;
 
-public class Category implements IEntity<Category>, Serializable {
+public class Category implements IEntity, Serializable {
     private int id;
     private String name;
     private boolean status;
+
     // Các construstor không tham số
     public Category() {
     }
+
     // Các construstor có tham số
     public Category(int id, String name, boolean status) {
         this.id = id;
@@ -47,23 +49,23 @@ public class Category implements IEntity<Category>, Serializable {
 
     /**
      * Nhập thông tin thể loại
-     * @param scanner
-     * @param list
      */
 
     @Override
-    public void input(Scanner scanner, List list) {
-        this.id=validateCategoryId(scanner,list);
-        this.name=validateName(scanner,list);
-        this.status=validateStatus(scanner);
+    public void input(Scanner scanner, List<Category> categoryList, List<Book> bookList) {
+        this.id = validateCategoryId(scanner, categoryList);
+        this.name = validateName(scanner, categoryList);
+        this.status = validateStatus(scanner);
     }
-    public static boolean validateNull(String str){
-        if (str!=null||str.trim().length()>0){
+
+    public static boolean validateNull(String str) {
+        if (str != null || str.trim().length() > 0) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
+
     public static int validateCategoryId(Scanner scanner, List<Category> list) {
         boolean isExit = false;
         do {
@@ -92,47 +94,49 @@ public class Category implements IEntity<Category>, Serializable {
         } while (!isExit);
         return -1;
     }
-    public static String validateName(Scanner scanner, List<Category>list){
+
+    public static String validateName(Scanner scanner, List<Category> list) {
         System.out.println("Nhập vào tên thể loại:");
         do {
-            String categoryName= scanner.nextLine();
-            if(validateNull(categoryName)){
-                boolean isExit=false;
-                for (Category category:list) {
-                    if(category.getName().equals(categoryName)){
-                        isExit=true;
+            String categoryName = scanner.nextLine();
+            if (validateNull(categoryName)) {
+                boolean isExit = false;
+                for (Category category : list) {
+                    if (category.getName().equals(categoryName)) {
+                        isExit = true;
                         break;
                     }
                 }
-                if(isExit){
+                if (isExit) {
                     System.err.println("Tên thể loại đã tồn tại, vui lòng nhập lại.");
-                }else{
-                    if(categoryName.length()>=6 && categoryName.length()<=30){
+                } else {
+                    if (categoryName.length() >= 6 && categoryName.length() <= 30) {
                         return categoryName;
-                    }else{
+                    } else {
                         System.err.println("Tên thể loại có độ dài từ 6-30 ký tự, vui lòng nhập lại.");
                     }
                 }
-            }else{
+            } else {
                 System.err.println("Vui lòng không để trống.");
             }
-        }while (true);
+        } while (true);
     }
-    public static boolean validateStatus(Scanner scanner){
+
+    public static boolean validateStatus(Scanner scanner) {
         System.out.println("Nhập vào trạng thái thể loại :");
         do {
-            String status=scanner.nextLine();
-            if(validateNull(status)){
-                if(status.equalsIgnoreCase("true")||status.equalsIgnoreCase("false")){
+            String status = scanner.nextLine();
+            if (validateNull(status)) {
+                if (status.equalsIgnoreCase("true") || status.equalsIgnoreCase("false")) {
                     return Boolean.parseBoolean(status);
-                }else{
+                } else {
                     System.err.println("Trạng thái thể loại chỉ nhận giá trị true | false, vui lòng nhập lại");
                 }
-            }else{
+            } else {
                 System.err.println("Vui lòng không để trống.");
             }
 
-        }while (true);
+        } while (true);
     }
 
     /**
@@ -140,7 +144,7 @@ public class Category implements IEntity<Category>, Serializable {
      */
     @Override
     public void output(List<Category> categoryList) {
-        String statusCategory=this.status?"Hoạt động": "Không hoạt động";
-        System.out.printf("CategoryId:%d - CategoryName:%s - status:%s\n",this.id,this.name,statusCategory);
+        String statusCategory = this.status ? "Hoạt động" : "Không hoạt động";
+        System.out.printf("| %-15d | %-25s | %-25s |\n", this.id, this.name,statusCategory);
     }
 }

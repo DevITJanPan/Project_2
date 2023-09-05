@@ -2,6 +2,7 @@ package ra.run;
 
 import ra.entity.Book;
 import ra.entity.Category;
+import ra.entity.Table;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,10 +15,12 @@ public class Library {
     public static List<Category> categoryList = new ArrayList<>();
     public static List<Book> bookList = new ArrayList<>();
     static Scanner scanner = new Scanner(System.in);
-
     public static void main(String[] args) {
         categoryList = readDataFromFile();
         bookList = readDataFromFileBook();
+        /**
+         * Hiển thị menu QUẢN LÝ THƯ VIỆN
+         */
         do {
             System.out.println("===== QUẢN LÝ THƯ VIỆN =====");
             System.out.println("1. Quản lý Thể loại");
@@ -27,13 +30,17 @@ public class Library {
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
-                    case 1 -> catagoryMenu(scanner);
-//                        break;
-                    case 2 -> bookMenu(scanner);
-//                        break;
-                    case 3 -> System.exit(0);
-//                        break;
-                    default -> System.err.println("Vui lòng chọn từ 1-3");
+                    case 1 :
+                        categoryMenu(scanner);
+                        break;
+                    case 2 :
+                        bookMenu(scanner);
+                        break;
+                    case 3 :
+                        System.exit(0);
+                        break;
+                    default :
+                        System.err.println("Vui lòng chọn từ 1-3");
                 }
             } catch (NumberFormatException nfe) {
                 System.err.println("Vui lòng chọn số");
@@ -57,7 +64,8 @@ public class Library {
             //3. Khởi tạo đối tượng ObjectInputStream
             ois = new ObjectInputStream(fis);
             //4. Đọc dữ liệu object từ file (readObject())
-            categoryList = (List<Category>) ois.readObject();
+            categoryList =
+                    (List<Category>) ois.readObject();
         } catch (FileNotFoundException e) {
             System.err.println("Không tồn tại file.");
         } catch (IOException e) {
@@ -210,8 +218,10 @@ public class Library {
             }
         }
     }
-
-    public static void catagoryMenu(Scanner scanner) {
+    /**
+     * Hiển thị menu category
+     */
+    public static void categoryMenu(Scanner scanner) {
         boolean isExit = true;
         do {
             System.out.println("===== QUẢN LÝ THỂ LOẠI =====");
@@ -226,19 +236,19 @@ public class Library {
                 int choiceCategoryMenu = Integer.parseInt(scanner.nextLine());
                 switch (choiceCategoryMenu) {
                     case 1:
-                        Library.inputCategory();
+                        inputCategory();
                         break;
                     case 2:
-                        Library.sortNamedDisplayCategory();
+                        sortNamedDisplayCategory();
                         break;
                     case 3:
-                        Library.statisticCategory();
+                        statisticCategory();
                         break;
                     case 4:
-                        Library.updateCategory(scanner);
+                        updateCategory(scanner);
                         break;
                     case 5:
-                        Library.deleteCategory();
+                        deleteCategory();
                         break;
                     case 6:
                         isExit = false;
@@ -259,9 +269,10 @@ public class Library {
      */
     public static void inputCategory() {
         Category category = new Category();
-        category.input(scanner, categoryList);
+        category.input(scanner, categoryList, bookList);
         categoryList.add(category);
         writeDataToFile(categoryList);
+        System.out.println("Thêm mới thể loại thành công.");
     }
 
     /**
@@ -269,7 +280,11 @@ public class Library {
      */
     public static void sortNamedDisplayCategory() {
         categoryList.sort(Comparator.comparing(Category::getName));
-        categoryList.forEach(Category::output);//Lỗi
+        System.out.println(Table.borderCategory());
+        System.out.println(Table.tableCategory());
+        System.out.println(Table.borderCategory());
+        categoryList.forEach(category -> category.output(categoryList));
+        System.out.println(Table.borderCategory());
     }
 
     /**
@@ -286,9 +301,10 @@ public class Library {
         });
         // Hiển thị thống kê
         for (int i = 0; i < categoryList.size(); i++) {
-            System.out.printf("Thể loại sách:%s - Số lượng:%d\n", categoryList.get(i).getName(), listCountBook.get(i));
-//            listCountBook.get(i);
+            System.out.println(Table.tableStatisticCategory());
+            System.out.printf("|Thể loại sách:     %-25s | Số lượng:     %-25d|\n", categoryList.get(i).getName(), listCountBook.get(i));
         }
+        System.out.println(Table.tableStatisticCategory());
     }
 
     /**
@@ -307,13 +323,14 @@ public class Library {
             for (Category category : categoryList) {
                 if (category.getId() == updateCategoryId) {
                     category.setName(Category.validateName(scanner, categoryList));
-                    System.out.println("Đã cập nhật tên thể loại thành công.");
                     category.setStatus(Category.validateStatus(scanner));
-                    System.out.println("Đã cập nhật trạng thái thể loại thành công.");
                     checkCategoryId = true;
                     isExit = false;
+                    writeDataToFile(categoryList);
+                    break;
                 }
             }
+            System.out.println("Đã cập nhật mới thành công.");
             if (!checkCategoryId) {
                 System.err.println("Mã thể loại không tồn tại, vui lòng nhập lại.");
             }
@@ -341,6 +358,7 @@ public class Library {
                 }
                 if (!categoryisExit) {
                     categoryList.remove(i);
+                    writeDataToFile(categoryList);
                 } else {
                     System.err.println("Mã thể loại đã nằm trong danh mục không thể xóa. ");
                 }
@@ -350,9 +368,12 @@ public class Library {
         if (!categoryExit) {
             System.err.println("Mã thể loại không tồn tại.");
         }
+        System.out.println("Đã  xóa mã thể loại thành công.");
     }
 
-    //hien thi menu book
+    /**
+     * Hiển thị menu book
+     */
     public static void bookMenu(Scanner scanner) {
         boolean isExit = true;
         do {
@@ -401,9 +422,10 @@ public class Library {
      */
     public static void addNewBook() {
         Book book = new Book();
-        book.input(scanner, bookList);
+        book.input(scanner, categoryList, bookList);
         bookList.add(book);
         writeDataToFileBook(bookList);
+        System.out.println("Đã thêm mới sách thành công.");
     }
 
     /**
@@ -422,23 +444,18 @@ public class Library {
             for (Book books : bookList) {
                 if (books.getBookId().equals(updateBookId)) {
                     books.setBookId(Book.validateBookId(scanner, bookList));
-                    System.out.println("Đã cập nhật mã sách mới thành công.");
                     books.setTitle(Book.validateTitle(scanner, bookList));
-                    System.out.println("Đã cập tiêu đề sách mới thành công.");
                     books.setAuthor(Book.validateAuthor(scanner));
-                    System.out.println("Đã cập tên tác giả mới thành công.");
                     books.setPublisher(Book.validatePublisher(scanner));
-                    System.out.println("Đã cập nhà xuất bản mới thành công.");
                     books.setYear(Book.validateYear(scanner));
-                    System.out.println("Đã cập nhật nhà xuất bản mới thành công.");
                     books.setDescription(Book.validateDescription(scanner));
-                    System.out.println("Đã cập nhật mô tả sách mới thành công.");
-//                    books.setId(Category.validateCategoryId(scanner, categoryList));
-//                    System.out.println("Đã cập nhât mã thể loại sách mới thành công.");
                     checkBookId = true;
                     isExit = false;
+                    writeDataToFileBook(bookList);
+                    break;
                 }
             }
+            System.out.println("Đã cập nhật sách mới thành công.");
             if (!checkBookId) {
                 System.err.println("Mã sách không tồn tại, vui lòng nhập lại.");
             }
@@ -464,9 +481,11 @@ public class Library {
                     System.out.println("Đã xóa sách thành công.");
                     checkBookId = true;
                     isExit = false;
+                    writeDataToFileBook(bookList);
                     break;
                 }
             }
+            System.out.println("Đã xóa sách thành công.");
             if (!checkBookId) {
                 System.err.println("Mã sách không tồn tại, vui lòng nhập lại.");
             }
@@ -485,25 +504,29 @@ public class Library {
         List<Book> bookList1 = bookList.stream().filter(book -> book.getTitle().contains(searchName)
                 || book.getAuthor().contains(searchName)
                 || book.getPublisher().contains(searchName)).collect(Collectors.toList());
+        System.out.println(Table.border());
         System.out.printf("| %-15s | %-20s | %-20s | %-20s | %-20s | %-20s | %n",
                 "Mã sách:", "Tiêu đề:", "Tác giả:", "Nhà xuất bản:", "Năm xuất bản:", "Thể loại:");
-        bookList1.forEach(Book::output); //Lỗi
+        System.out.println(Table.border());
+        bookList1.forEach(book -> book.output(categoryList));
+        System.out.println(Table.border());
     }
 
     /**
      * Methor hiển thị danh sách sách theo nhóm thể loại
      */
     public static void displayBook() {
-        int cntCategory=1;
-        for (Category category:categoryList) {
-            System.out.println(cntCategory+"."+category.getName());
+        int cntCategory = 1;
+        System.out.println(Table.border());
+        for (Category category : categoryList) {
+            System.out.println(cntCategory + "." + category.getName());
             cntCategory++;
-            for (Book books:bookList) {
-                if(category.getId()==books.getCategoryId()){
+            for (Book books : bookList) {
+                if (category.getId() == books.getCategoryId()) {
                     books.output(categoryList);
                 }
             }
-            System.out.println();
+            System.out.println(Table.border());
         }
     }
 }

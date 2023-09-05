@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import static ra.run.Library.categoryList;
 
-public class Book implements IEntity<Book>, Serializable {
+public class Book implements IEntity, Serializable {
     private String bookId;
     private String title;
     private String author;
@@ -106,19 +106,31 @@ public class Book implements IEntity<Book>, Serializable {
      * Nhập thông tin sách
      */
     @Override
-    public void input(Scanner scanner, List list) {
-        this.bookId = validateBookId(scanner, list);
-        this.title = validateTitle(scanner, list);
+    public void input(Scanner scanner, List<Category> categoryList, List<Book> bookList) {
+        this.bookId = validateBookId(scanner, bookList);
+        this.title = validateTitle(scanner, bookList);
         this.author = validateAuthor(scanner);
         this.publisher = validatePublisher(scanner);
         this.year = validateYear(scanner);
         this.description = validateDescription(scanner);
+        this.categoryId = validateCategoryId(scanner, categoryList);
+
     }
 
-//    @Override
-//    public void output() {
-//
-//    }
+    public static int validateCategoryId(Scanner scanner, List<Category> categoryList) {
+        System.out.println("Nhập vào categoryId :");
+        do {
+            List<Integer> listCategoryId = categoryList.stream().map(category -> category.getId()).collect(Collectors.toList());
+
+            int categoryId = Integer.parseInt(scanner.nextLine());
+            if (listCategoryId.contains(categoryId)) {
+                return categoryId;
+            } else {
+                System.err.println("Mã không tồn tại , vui lòng nhập lại.");
+            }
+        } while (true);
+
+    }
 
     public static boolean validateNull(String str) {
         if (str.trim().length() > 0) {
@@ -257,16 +269,6 @@ public class Book implements IEntity<Book>, Serializable {
      */
     @Override
     public void output(List<Category> categoryList) {
-//        System.out.printf("Mã sách%s - Tiêu đề%s - Tác giả%s\n",this.bookId,this.title,this.author);
-//        System.out.printf("Nhà xuất bản%s - Năm xuất bản%d - Thể loại(hiển thị tên thể loại sách theo mã thể loại lúc nhập)%d\n",this.publisher,this.year,this.categoryId);
-        // categoryList.stream().filter(category -> category.getId()==this.categoryId):Lấy ra các phần tử thỏa mãn điều kiện(Stream)
-        //..collect(Collectors.toList()): chuyển stream ->List<Category>
-        // .get(0).getName(): Tên của phần tử đầu tiên
-//        String categoryName=categoryList.stream().filter(category ->
-//                category.getId()==this.categoryId).collect(Collectors.toList()).get(0).getName();
-//        System.out.printf("Mã sách:"+this.bookId+"-Tiêu đề:"+this.title+"-Tác giả:\n"+this.author);
-//        System.out.printf("Nhà xuất bản:"+this.publisher+"-Năm xuất bản:"+this.year+"-Thể loại:");
-        // TODO loi format
         String categoryName = null;
         for (Category category : categoryList) {
             if (category.getId() == this.categoryId) {
