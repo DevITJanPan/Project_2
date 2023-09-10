@@ -23,10 +23,11 @@ public class Library {
          */
         do {
             System.out.println("===== QUẢN LÝ THƯ VIỆN =====");
-            System.out.println("1. Quản lý Thể loại");
-            System.out.println("2. Quản lý Sách");
-            System.out.println("3. Thoát");
-            System.out.print("Sự lựa chọn của bạn:");
+            System.out.println("||   1. Quản lý Thể loại  ||");
+            System.out.println("||   2. Quản lý Sách      ||");
+            System.out.println("||   3. Thoát             ||");
+            System.out.println("||   Sự lựa chọn của bạn: ||");
+            System.out.println("============================");
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 switch (choice) {
@@ -224,14 +225,15 @@ public class Library {
     public static void categoryMenu(Scanner scanner) {
         boolean isExit = true;
         do {
-            System.out.println("===== QUẢN LÝ THỂ LOẠI =====");
-            System.out.println("1. Thêm mới thể loại");
-            System.out.println("2. Hiển thị danh sách theo tên A – Z");
-            System.out.println("3. Thống kê thể loại và số sách có trong mỗi thể loại");
-            System.out.println("4. Cập nhật thể loại");
-            System.out.println("5. Xóa thể loại");
-            System.out.println("6. Quay lại");
-            System.out.print("Lựa chọn của bạn là:");
+            System.out.println("========================= QUẢN LÝ THỂ LOẠI =========================");
+            System.out.println("||         1. Thêm mới thể loại                                   ||");
+            System.out.println("||         2. Hiển thị danh sách theo tên A – Z                   ||");
+            System.out.println("||         3. Thống kê thể loại và số sách có trong mỗi thể loại  ||");
+            System.out.println("||         4. Cập nhật thể loại                                   ||");
+            System.out.println("||         5. Xóa thể loại                                        ||");
+            System.out.println("||         6. Quay lại                                            ||");
+            System.out.println("||         Lựa chọn của bạn là:                                   ||");
+            System.out.println("====================================================================");
             try {
                 int choiceCategoryMenu = Integer.parseInt(scanner.nextLine());
                 switch (choiceCategoryMenu) {
@@ -368,7 +370,6 @@ public class Library {
         if (!categoryExit) {
             System.err.println("Mã thể loại không tồn tại.");
         }
-        System.out.println("Đã  xóa mã thể loại thành công.");
     }
 
     /**
@@ -377,25 +378,26 @@ public class Library {
     public static void bookMenu(Scanner scanner) {
         boolean isExit = true;
         do {
-            System.out.println("===== QUẢN LÝ SÁCH =====");
-            System.out.println("1. Thêm mới sách");
-            System.out.println("2. Cập nhật thông tin sách");
-            System.out.println("3. Xóa sách");
-            System.out.println("4. Tìm kiếm sách");
-            System.out.println("5. Hiển thị danh sách sách theo nhóm thể loại");
-            System.out.println("6. Quay lại");
-            System.out.print("Lựa chọn của bạn là:");
+            System.out.println("==================== QUẢN LÝ SÁCH ====================");
+            System.out.println("||   1. Thêm mới sách                               ||");
+            System.out.println("||   2. Cập nhật thông tin sách                     ||");
+            System.out.println("||   3. Xóa sách                                    ||");
+            System.out.println("||   4. Tìm kiếm sách                               ||");
+            System.out.println("||   5. Hiển thị danh sách sách theo nhóm thể loại  ||");
+            System.out.println("||   6. Quay lại                                    ||");
+            System.out.println("||   Lựa chọn của bạn là:                           ||");
+            System.out.println("======================================================");
             try {
                 int choiceBookMenu = Integer.parseInt(scanner.nextLine());
                 switch (choiceBookMenu) {
                     case 1:
-                        Library.addNewBook();
+                        addNewBook();
                         break;
                     case 2:
-                        Library.updateBook();
+                        updateBook();
                         break;
                     case 3:
-                        Library.deleteBook();
+                        deleteBook();
                         break;
                     case 4:
                         searchIdBookName();
@@ -443,7 +445,6 @@ public class Library {
             boolean checkBookId = false;
             for (Book books : bookList) {
                 if (books.getBookId().equals(updateBookId)) {
-                    books.setBookId(Book.validateBookId(scanner, bookList));
                     books.setTitle(Book.validateTitle(scanner, bookList));
                     books.setAuthor(Book.validateAuthor(scanner));
                     books.setPublisher(Book.validatePublisher(scanner));
@@ -452,10 +453,10 @@ public class Library {
                     checkBookId = true;
                     isExit = false;
                     writeDataToFileBook(bookList);
+                    System.out.println("Cập nhật sách thành công.");
                     break;
                 }
             }
-            System.out.println("Đã cập nhật sách mới thành công.");
             if (!checkBookId) {
                 System.err.println("Mã sách không tồn tại, vui lòng nhập lại.");
             }
@@ -478,7 +479,6 @@ public class Library {
             for (Book bookDelete : bookList) {
                 if (bookDelete.getBookId().equals(deleteBookId)) {
                     bookList.remove(bookDelete);
-                    System.out.println("Đã xóa sách thành công.");
                     checkBookId = true;
                     isExit = false;
                     writeDataToFileBook(bookList);
@@ -491,25 +491,25 @@ public class Library {
             }
         } while (isExit);
     }
-
     /**
      * Methor tìm kiếm sách
      */
     public static void searchIdBookName() {
-        System.out.println("Nhập vào sách cần tìm :");
+        System.out.println("Thông tin các sách cần tìm kiếm :");
         String searchName = scanner.nextLine();
-        bookList.stream().filter(book -> book.getTitle().contains(searchName)
-                || book.getAuthor().contains(searchName)
-                || book.getPublisher().contains(searchName)).collect(Collectors.toList());
-        List<Book> bookList1 = bookList.stream().filter(book -> book.getTitle().contains(searchName)
-                || book.getAuthor().contains(searchName)
-                || book.getPublisher().contains(searchName)).collect(Collectors.toList());
-        System.out.println(Table.border());
-        System.out.printf("| %-15s | %-20s | %-20s | %-20s | %-20s | %-20s | %n",
-                "Mã sách:", "Tiêu đề:", "Tác giả:", "Nhà xuất bản:", "Năm xuất bản:", "Thể loại:");
-        System.out.println(Table.border());
-        bookList1.forEach(book -> book.output(categoryList));
-        System.out.println(Table.border());
+            List<Book> bookList1 = bookList.stream().filter(book -> book.getTitle().contains(searchName)
+                    || book.getAuthor().contains(searchName)
+                    || book.getPublisher().contains(searchName)).collect(Collectors.toList());
+            if(bookList1.isEmpty()){
+                System.err.println("Không có  thông tin muốn  tìm kiếm.");
+            }else{
+                System.out.println(Table.border());
+                System.out.printf("| %-15s | %-20s | %-20s | %-20s | %-20s | %-20s | %n",
+                        "Mã sách:", "Tiêu đề:", "Tác giả:", "Nhà xuất bản:", "Năm xuất bản:", "Thể loại:");
+                System.out.println(Table.border());
+                bookList1.forEach(book -> book.output(categoryList));
+                System.out.println(Table.border());
+            }
     }
 
     /**

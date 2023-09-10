@@ -59,7 +59,7 @@ public class Category implements IEntity, Serializable {
     }
 
     public static boolean validateNull(String str) {
-        if (str != null || str.trim().length() > 0) {
+        if ( str.trim().length() > 0) {
             return true;
         } else {
             return false;
